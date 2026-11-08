@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS AI</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #020817;
+  color: cyan;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 25px 15px;
+}
+
+h1 {
+  text-shadow: 0 0 20px cyan;
+  letter-spacing: 5px;
+}
+
+.core {
+  width: 180px;
+  height: 180px;
+  border: 4px solid cyan;
+  border-radius: 50%;
+  margin: 35px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 75px;
+  box-shadow: 0 0 25px cyan;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 10px cyan; }
+  to { box-shadow: 0 0 40px cyan; }
+}
+
+button {
+  display: block;
+  width: 90%;
+  max-width: 300px;
+  margin: 15px auto;
+  padding: 15px;
+  border: 2px solid cyan;
+  border-radius: 30px;
+  background: #001f35;
+  color: cyan;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+button:active {
+  background: cyan;
+  color: black;
+}
+
+#status {
+  color: white;
+  margin-top: 25px;
+  min-height: 30px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>J.A.R.V.I.S</h1>
+<p>PERSONAL AI ASSISTANT</p>
+
+<div class="core">J</div>
+
+<button onclick="startJarvis()">START JARVIS</button>
+<button onclick="speakTelugu()">TEST VOICE</button>
+<button onclick="listenJarvis()">TALK TO JARVIS</button>
+
+<p id="status">SYSTEM READY</p>
+
+<script>
+const statusText = document.getElementById("status");
+
+function startJarvis() {
+  statusText.innerText = "జార్విస్ సిద్ధంగా ఉంది!";
+  speak("నమస్కారం! నేను జార్విస్. మీకు ఎలా సహాయం చేయగలను?");
+}
+
+function speak(message) {
+  if (!("speechSynthesis" in window)) {
+    statusText.innerText = "VOICE NOT SUPPORTED";
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const voice = new SpeechSynthesisUtterance(message);
+  voice.lang = "te-IN";
+  voice.rate = 0.85;
+  voice.pitch = 0.75;
+  voice.volume = 1;
+
+  window.speechSynthesis.speak(voice);
+}
+
+function speakTelugu() {
+  speak("నమస్కారం! నేను మీ జార్విస్. నేను సిద్ధంగా ఉన్నాను.");
+  statusText.innerText = "జార్విస్ మాట్లాడుతోంది...";
+}
+
+function listenJarvis() {
+  const Recognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!Recognition) {
+    statusText.innerText = "VOICE NOT SUPPORTED";
+    return;
+  }
+
+  const recognition = new Recognition();
+  recognition.lang = "te-IN";
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    statusText.innerText = "మీ మాటలు వింటున్నాను...";
+  };
+
+  recognition.onresult = (event) => {
+    const message = event.results[0][0].transcript;
+    statusText.innerText = "మీరు చెప్పారు: " + message;
+    speak("మీరు చెప్పింది నాకు అర్థమైంది. " + message);
+  };
+
+  recognition.onerror = (event) => {
+    statusText.innerText = "VOICE ERROR: " + event.error;
+  };
+
+  recognition.start();
+}
+</script>
+
+</body>
+</html>
